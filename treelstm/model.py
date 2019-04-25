@@ -86,17 +86,17 @@ class SimilarityTreeLSTM(nn.Module):
         output = self.similarity(lstate, rstate)
         return output
 
-class SentimentTreeLSTM(nn.module):
+class SentimentTreeLSTM(nn.Module):
     def __init__(self, vocab_size, in_dim, mem_dim, num_classes, sparsity, freeze):
         super(SentimentTreeLSTM, self).__init__()
         self. emb = nn.Embedding(vocab_size, in_dim, padding_idx=Constants.PAD, sparse=sparsity)
         if freeze:
             self.emb.weight.requires_grad = False
-        self.childsumtreelstm = ChildSumTreeLSTM(in_dim,mem_dim)
-        self.activation_layer = nn.linear(mem_dim, num_classes)
+        self.childsumtreelstm = ChildSumTreeLSTM(in_dim, mem_dim)
+        self.activation_layer = nn.Linear(mem_dim, num_classes)
 
-    def forward(self,tree, inputs):
+    def forward(self, tree, inputs):
         inputs = self.emb(inputs)
-        tree_cell, tree_hidden = self.childsumtreelstm(tree,inputs)
+        tree_cell, tree_hidden = self.childsumtreelstm(tree, inputs)
         #TODO: try attention/maxpool on hidden states
         return self.activation_layer(tree_hidden)

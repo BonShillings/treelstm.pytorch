@@ -22,7 +22,7 @@ from treelstm import Metrics
 # UTILITY FUNCTIONS
 from treelstm import utils
 # TRAIN AND TEST HELPER FUNCTIONS
-from treelstm import Trainer
+from treelstm import SSTTrainer
 # CONFIG PARSER
 from sst_config import parse_args
 
@@ -159,7 +159,7 @@ def main():
     metrics = Metrics(args.num_classes)
 
     # create trainer object for training and testing
-    trainer = Trainer(args, model, criterion, optimizer, device)
+    trainer = SSTTrainer(args, model, criterion, optimizer, device)
 
     best = -float('inf')
     for epoch in range(args.epochs):
