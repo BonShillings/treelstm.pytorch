@@ -85,14 +85,14 @@ def main():
         train_dataset = SSTDataset(train_dir, vocab, args.num_classes)
         torch.save(train_dataset, train_file)
     logger.debug('==> Size of train data   : %d ' % len(train_dataset))
-    dev_file = os.path.join(args.data, 'sick_dev.pth')
+    dev_file = os.path.join(args.data, 'sst_dev.pth')
     if os.path.isfile(dev_file):
         dev_dataset = torch.load(dev_file)
     else:
         dev_dataset = SSTDataset(dev_dir, vocab, args.num_classes)
         torch.save(dev_dataset, dev_file)
     logger.debug('==> Size of dev data     : %d ' % len(dev_dataset))
-    test_file = os.path.join(args.data, 'sick_test.pth')
+    test_file = os.path.join(args.data, 'sst_test.pth')
     if os.path.isfile(test_file):
         test_dataset = torch.load(test_file)
     else:

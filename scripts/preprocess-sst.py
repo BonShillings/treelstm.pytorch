@@ -341,7 +341,7 @@ if __name__ == '__main__':
         os.path.join(lib_dir, 'stanford-parser/stanford-parser.jar'),
         os.path.join(lib_dir, 'stanford-parser/stanford-parser-3.5.1-models.jar')])
     for filepath in sent_paths:
-        dependency_parse(filepath, cp=classpath, tokenize=False)
+        dependency_parse(filepath, cp=classpath, tokenize=True)
 
     # get vocabulary
     build_vocab(sent_paths, os.path.join(sst_dir, 'vocab.txt'))

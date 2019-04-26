@@ -18,9 +18,9 @@ class SSTDataset(data.Dataset):
 
         self.sentences = self.read_sentences(os.path.join(path, 'sents.toks'))
 
-        self.trees = self.read_trees(os.path.join(path, 'parents.txt'))
+        self.trees = self.read_trees(os.path.join(path, 'dparents.txt'))
 
-        self.labels = self.read_labels(os.path.join(path, 'labels.txt'))
+        self.labels = self.read_labels(os.path.join(path, 'dlabels.txt'))
 
         self.size = self.labels.size(0)
 
@@ -28,8 +28,8 @@ class SSTDataset(data.Dataset):
         return self.size
 
     def __getitem__(self, index):
-        tree = deepcopy(self.ltrees[index])
-        sent = deepcopy(self.lsentences[index])
+        tree = deepcopy(self.trees[index])
+        sent = deepcopy(self.sentences[index])
         label = deepcopy(self.labels[index])
         return (tree, sent, label)
 
@@ -77,9 +77,17 @@ class SSTDataset(data.Dataset):
 
     def read_labels(self, filename):
         with open(filename, 'r') as f:
-            labels = list(map(lambda x: float(x), f.readlines()))
-            labels = torch.tensor(labels, dtype=torch.float, device='cpu')
+            labels = list(map(lambda x: [int(sum([self.try_parse_label(i) for i in x.split("\\s+")]))], f.readlines()))
+
+            labels = torch.tensor(labels, dtype=torch.long, device='cpu')
         return labels
+
+    @staticmethod
+    def try_parse_label(s):
+        try:
+            return int(s)
+        except ValueError:
+            return 0
 
 # Dataset class for SICK dataset
 class SICKDataset(data.Dataset):
