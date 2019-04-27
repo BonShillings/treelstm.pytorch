@@ -96,9 +96,11 @@ class SSTTrainer(Trainer):
                 target = target.to(self.device)
 
                 output = self.model(tree, input)
-
+                prediction = torch.argmax(torch.softmax(output, dim=1))
                 loss = self.criterion(output, target)
                 total_loss += loss.item()
-                output = output.squeeze().to('cpu')
-                predictions[idx] = torch.dot(indices, torch.exp(output))
+                prediction = prediction.squeeze().to('cpu')
+                #import ipdb
+                #ipdb.set_trace()
+                predictions[idx] = prediction
         return total_loss / len(dataset), predictions
