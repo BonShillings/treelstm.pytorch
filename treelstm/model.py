@@ -99,4 +99,11 @@ class SentimentTreeLSTM(nn.Module):
         inputs = self.emb(inputs)
         tree_cell, tree_hidden = self.childsumtreelstm(tree, inputs)
         #TODO: try attention/maxpool on hidden states
-        return self.activation_layer(tree_hidden)
+        act = self.activation_layer(tree_hidden)
+
+        return act
+
+    def predict(self, tree, inputs):
+        act = self.forward(tree,inputs)
+        prediction = torch.argmax(torch.softmax(act, dim=1))
+        return prediction

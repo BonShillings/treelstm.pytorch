@@ -91,10 +91,12 @@ class SSTTrainer(Trainer):
             indices = torch.arange(1, dataset.num_classes + 1, dtype=torch.float, device='cpu')
             for idx in tqdm(range(len(dataset)), desc='Testing epoch  ' + str(self.epoch) + ''):
                 tree, input, label = dataset[idx]
-                target = utils.map_label_to_target(label, dataset.num_classes)
+                target = label#utils.map_label_to_target(label, dataset.num_classes)
                 input = input.to(self.device)
                 target = target.to(self.device)
+
                 output = self.model(tree, input)
+
                 loss = self.criterion(output, target)
                 total_loss += loss.item()
                 output = output.squeeze().to('cpu')

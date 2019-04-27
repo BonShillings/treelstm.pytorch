@@ -17,10 +17,11 @@ class SSTDataset(data.Dataset):
         self.num_classes = num_classes
 
         self.sentences = self.read_sentences(os.path.join(path, 'sents.toks'))
+        tree_path = os.path.join(path, 'dparents.txt')
+        label_path = os.path.join(path, 'dlabels.txt')
+        self.trees = self.read_trees_with_labels(tree_path, label_path)
 
-        self.trees = self.read_trees(os.path.join(path, 'dparents.txt'))
-
-        self.labels = self.read_labels(os.path.join(path, 'dlabels.txt'))
+        self.labels = [tree.gold_label + 3 for tree in self.trees]
 
         self.size = self.labels.size(0)
 
@@ -42,12 +43,15 @@ class SSTDataset(data.Dataset):
         indices = self.vocab.convertToIdx(line.split(), Constants.UNK_WORD)
         return torch.tensor(indices, dtype=torch.long, device='cpu')
 
-    def read_trees(self, filename):
-        with open(filename, 'r') as f:
-            trees = [self.read_tree(line) for line in tqdm(f.readlines())]
+    def read_trees_with_labels(self, treefilename,labelfilename):
+        with open(treefilename, 'r') as t:
+            with open(labelfilename,'r') as l:
+                tree_lines = tqdm(t.readlines())
+                labels = tqdm(l.readlines())
+                trees = [self.read_tree_with_labels(tree_lines[i],labels[i]) for i in range(len(tree_lines))]
         return trees
 
-    def read_tree(self, line):
+    def read_trees_with_labels(self, line, labels):
         parents = list(map(int, line.split()))
         trees = dict()
         root = None
@@ -64,6 +68,7 @@ class SSTDataset(data.Dataset):
                         tree.add_child(prev)
                     trees[idx - 1] = tree
                     tree.idx = idx - 1
+                    tree.gold_label = labels[idx-1]
                     if parent - 1 in trees.keys():
                         trees[parent - 1].add_child(tree)
                         break
